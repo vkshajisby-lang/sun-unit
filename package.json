@@ -1,0 +1,9 @@
+{
+  "name": "sunday-school-unit-test-app",
+  "version": "1.0.0",
+  "description": "St. George Sunday School, Karyambadi Unit Test App",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

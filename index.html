@@ -1,0 +1,2002 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>സെന്റ് ജോർജ് സൺഡേ സ്കൂൾ, കാര്യമ്പാടി - യൂണിറ്റ് പരീക്ഷ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manjari:wght@400;700&family=Gayathri:wght@400;700&display=swap" rel="stylesheet">
+  <!-- PDF.js library for high fidelity PDF rendering & text parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- Canvas Confetti for student celebration -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <!-- SheetJS for exporting results to Excel -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  
+  <style>
+    :root {
+      --primary: #8b0000; /* Deep ecclesiastical burgundy/maroon */
+      --primary-light: #b22222;
+      --accent: #d4af37; /* Church Gold */
+      --accent-light: #fdf8e6;
+      --dark: #23272f;
+      --light-bg: #f5f7fb;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Gayathri', 'Manjari', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--light-bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(135deg, #670000 0%, #8b0000 50%, #500000 100%);
+      color: white;
+      padding: 1.2rem 1.5rem;
+      border-bottom: 4px solid var(--accent);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-container {
+      max-width: 1550px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .school-title {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .school-logo {
+      font-size: 2.2rem;
+      background: white;
+      border-radius: 50%;
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .school-title h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 3px;
+    }
+
+    .school-title p {
+      font-size: 0.95rem;
+      color: #ffe6aa;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+    }
+
+    .btn-gold {
+      background-color: var(--accent);
+      color: #3b2800;
+    }
+    .btn-gold:hover {
+      background-color: #e5bd3b;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: white;
+      border: 1.5px solid rgba(255, 255, 255, 0.7);
+    }
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: white;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-light);
+    }
+
+    .btn-success {
+      background-color: var(--success);
+      color: white;
+    }
+    .btn-success:hover {
+      background-color: #15803d;
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 0.85rem;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .view-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+    }
+
+    .register-box {
+      max-width: 650px;
+      margin: 2rem auto;
+      background: white;
+      border-radius: 16px;
+      padding: 2.2rem;
+      box-shadow: var(--shadow-lg);
+      border-top: 6px solid var(--primary);
+    }
+
+    .register-box h2 {
+      color: var(--primary);
+      margin-bottom: 1.2rem;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 700;
+      color: var(--text);
+      font-size: 1.05rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 1.05rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+      background: #fafafa;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+    }
+
+    .exam-container {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1.5rem;
+      height: calc(100vh - 120px);
+      min-height: 600px;
+    }
+
+    @media (max-width: 950px) {
+      .exam-container {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+    }
+
+    .pdf-pane {
+      background: #474b52;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .pdf-toolbar {
+      background: #2d3036;
+      color: white;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+
+    .pdf-viewer-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      background: #525659;
+    }
+
+    .pdf-page-canvas {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      max-width: 100%;
+      height: auto !important;
+      background: white;
+      border-radius: 4px;
+    }
+
+    .omr-pane {
+      background: white;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+    }
+
+    .omr-header {
+      background: #f8fafc;
+      padding: 1rem 1.2rem;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .student-badge {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: #f1f5f9;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .omr-summary {
+      font-weight: bold;
+      color: var(--primary);
+      font-size: 1rem;
+    }
+
+    .omr-grid-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.2rem;
+    }
+
+    .omr-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 10px;
+    }
+
+    .q-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: #fbfcfe;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      transition: background 0.15s;
+    }
+
+    .q-row:hover {
+      background: #f1f5f9;
+    }
+
+    .q-row.answered {
+      border-left: 4px solid var(--primary);
+      background: #fff9f9;
+    }
+
+    .q-num {
+      font-weight: bold;
+      min-width: 48px;
+      font-size: 1rem;
+      color: #334155;
+    }
+
+    .options-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .opt-bubble {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid #94a3b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.95rem;
+      background: white;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .opt-bubble:hover {
+      border-color: var(--primary);
+      background: #fff1f1;
+    }
+
+    .opt-bubble.selected {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      transform: scale(1.05);
+      box-shadow: 0 2px 4px rgba(139, 0, 0, 0.3);
+    }
+
+    .opt-bubble.clear-btn {
+      width: 26px;
+      height: 26px;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      border: 1px dashed #cbd5e1;
+      margin-left: 4px;
+      border-radius: 4px;
+    }
+    .opt-bubble.clear-btn:hover {
+      background: #fee2e2;
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+
+    .omr-footer {
+      padding: 1rem 1.2rem;
+      background: #f8fafc;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .result-card {
+      max-width: 700px;
+      margin: 2rem auto;
+      background: white;
+      border-radius: 16px;
+      padding: 2.5rem;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      border-top: 8px solid var(--success);
+    }
+
+    .score-circle {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: #f0fdf4;
+      border: 6px solid var(--success);
+      margin: 1.5rem auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .score-val {
+      font-size: 2.8rem;
+      font-weight: bold;
+      color: var(--success);
+      line-height: 1;
+    }
+
+    .score-max {
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+
+    .admin-card {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .admin-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 8px 18px;
+      border-radius: 6px;
+      background: #e2e8f0;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 1rem;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      margin-top: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    table th, table td {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    table th {
+      background: #f1f5f9;
+      color: #334155;
+    }
+
+    table tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    .key-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+      margin-top: 0.8rem;
+      max-height: 280px;
+      overflow-y: auto;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .key-cell {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .key-cell select {
+      padding: 4px;
+      font-weight: bold;
+      border-radius: 4px;
+      border: 1px solid #cbd5e1;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    .badge-primary { background: #fee2e2; color: var(--primary); }
+    .badge-success { background: #dcfce7; color: #15803d; }
+    .badge-warning { background: #fef3c7; color: #92400e; }
+
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(3px);
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 500px;
+      padding: 2rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .upload-card-box {
+      border: 1.5px solid #e2e8f0;
+      background: white;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media print {
+      header, .no-print {
+        display: none !important;
+      }
+      .result-card {
+        box-shadow: none;
+        border: 1px solid #000;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div class="school-title">
+        <div class="school-logo">⛪</div>
+        <div>
+          <h1>സെന്റ് ജോർജ് സൺഡേ സ്കൂൾ, കാര്യമ്പാടി</h1>
+          <p>യൂണിറ്റ് പരീക്ഷ - ചോദ്യോത്തര പോർട്ടൽ (Sunday School Unit Test)</p>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <span id="syncStatusBadge" class="badge badge-success" style="padding: 6px 12px; font-size: 0.85rem;">🌐 ഡാറ്റാബേസ് കണക്റ്റഡ്</span>
+        <button id="btnStudentView" class="btn btn-outline" onclick="switchView('studentRegister')">👨‍🎓 വിദ്യാർത്ഥി പ്രവേശനം</button>
+        <button id="btnAdminView" class="btn btn-gold" onclick="openAdminModal()">⚙️ അഡ്മിൻ പാനൽ</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Body -->
+  <main>
+
+    <!-- 1. Student Registration View -->
+    <section id="viewStudentRegister" class="view-section">
+      <div class="register-box">
+        <h2>യൂണിറ്റ് പരീക്ഷ രജിസ്ട്രേഷൻ</h2>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 1.5rem;">വിദ്യാർത്ഥിയുടെ വിവരങ്ങൾ നൽകി പരീക്ഷ ആരംഭിക്കുക</p>
+        
+        <form id="studentRegForm" onsubmit="startExam(event)">
+          <div class="form-group">
+            <label for="examPaperSelect">ചോദ്യപേപ്പർ തിരഞ്ഞെടുക്കുക (Select Question Paper / Slot) *</label>
+            <select id="examClass" class="form-control" required onchange="onClassSelected()">
+              <option value="">-- ചോദ്യപേപ്പർ തിരഞ്ഞെടുക്കുക --</option>
+              <option value="classA" id="optClassA">പേപ്പർ 1 (Question Paper 1)</option>
+              <option value="classB" id="optClassB">പേപ്പർ 2 (Question Paper 2)</option>
+            </select>
+            <small id="classNotice" style="color: var(--primary); display:block; margin-top:5px; font-weight:bold;"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="studentGrade">വിദ്യാർത്ഥിയുടെ ക്ലാസ്സ് (Student Class: 1 to 12) *</label>
+            <select id="studentGrade" class="form-control" required>
+              <option value="">-- ക്ലാസ്സ് തിരഞ്ഞെടുക്കുക (Class 1 - 12) --</option>
+              <option value="ക്ലാസ്സ് 1">ക്ലാസ്സ് 1 (Class 1)</option>
+              <option value="ക്ലാസ്സ് 2">ക്ലാസ്സ് 2 (Class 2)</option>
+              <option value="ക്ലാസ്സ് 3">ക്ലാസ്സ് 3 (Class 3)</option>
+              <option value="ക്ലാസ്സ് 4">ക്ലാസ്സ് 4 (Class 4)</option>
+              <option value="ക്ലാസ്സ് 5">ക്ലാസ്സ് 5 (Class 5)</option>
+              <option value="ക്ലാസ്സ് 6">ക്ലാസ്സ് 6 (Class 6)</option>
+              <option value="ക്ലാസ്സ് 7">ക്ലാസ്സ് 7 (Class 7)</option>
+              <option value="ക്ലാസ്സ് 8">ക്ലാസ്സ് 8 (Class 8)</option>
+              <option value="ക്ലാസ്സ് 9">ക്ലാസ്സ് 9 (Class 9)</option>
+              <option value="ക്ലാസ്സ് 10">ക്ലാസ്സ് 10 (Class 10)</option>
+              <option value="ക്ലാസ്സ് 11">ക്ലാസ്സ് 11 (Class 11)</option>
+              <option value="ക്ലാസ്സ് 12">ക്ലാസ്സ് 12 (Class 12)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="studentNameSelect">വിദ്യാർത്ഥിയുടെ പേര് (Student's Name) *</label>
+            <div id="studentSelectWrapper">
+              <!-- Dynamically switched between dropdown or text input if roster exists -->
+              <input type="text" id="studentName" class="form-control" placeholder="പേര് ടൈപ്പ് ചെയ്യുക" required>
+            </div>
+            <small id="rosterHint" style="color: #64748b; margin-top: 4px; display: block;"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="studentRoll">റോൾ നമ്പർ / രജിസ്റ്റർ നമ്പർ (Roll No)</label>
+            <input type="text" id="studentRoll" class="form-control" placeholder="ഉദാഹരണത്തിന്: 12">
+          </div>
+
+          <div style="background: #fffbeb; border: 1px solid #fde68a; padding: 12px; border-radius: 8px; margin-bottom: 1.5rem;">
+            <p style="font-size: 0.9rem; color: #92400e; line-height: 1.5;">
+              📌 <strong>നിർദ്ദേശങ്ങൾ:</strong><br>
+              1. പരീക്ഷയിൽ 50 മൾട്ടിപ്പിൾ ചോയ്സ് ചോദ്യങ്ങൾ ഉണ്ടായിരിക്കുന്നതാണ്.<br>
+              2. ചോദ്യപേപ്പർ PDF സ്ക്രീനിന്റെ ഇടത് വശത്ത് കൃത്യമായി കാണാം (മലയാളം ലിപി പ്രശ്നങ്ങൾ ഉണ്ടാവില്ല).<br>
+              3. വലത് വശത്ത് ഓരോ ചോദ്യത്തിനും ശരിയായ ഉത്തരം (A, B, C, D) അടയാളപ്പെടുത്തുക.<br>
+              4. പരീക്ഷ പൂർത്തിയാക്കി "സമർപ്പിക്കുക" (Submit) ബട്ടൺ അമർത്തുക. അഡ്മിൻ നൽകിയിട്ടുള്ള ഉത്തരസൂചികയുമായി (Answer Key) തത്സമയം പരിശോധിച്ച് ആകെ മാർക്ക് ലഭിക്കുന്നതാണ്.
+            </p>
+          </div>
+
+          <button type="submit" id="btnStartExam" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 1.15rem; justify-content: center;">
+            പരീക്ഷ ആരംഭിക്കുക (Start Exam) ➔
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 2. Exam Split Interface (PDF on Left, OMR on Right) -->
+    <section id="viewExamInterface" class="view-section" style="display: none;">
+      <div class="exam-container">
+        
+        <!-- Left: PDF Viewer -->
+        <div class="pdf-pane">
+          <div class="pdf-toolbar">
+            <div style="font-weight: bold;" id="pdfPaperTitle">📄 ചോദ്യപേപ്പർ (Question Paper)</div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <span>പേജ്: <strong id="pdfPageNum">1</strong> / <strong id="pdfPageCount">1</strong></span>
+              <button class="btn btn-sm btn-outline" onclick="prevPdfPage()">◀ മുൻപിലേക്ക്</button>
+              <button class="btn btn-sm btn-outline" onclick="nextPdfPage()">അടുത്തത് ▶</button>
+              <button class="btn btn-sm btn-outline" onclick="zoomPdf(0.15)">🔍+</button>
+              <button class="btn btn-sm btn-outline" onclick="zoomPdf(-0.15)">🔍-</button>
+            </div>
+          </div>
+          <div class="pdf-viewer-scroll" id="pdfContainer">
+            <div id="pdfLoadingState" style="color: white; margin-top: 40px; text-align: center;">
+              <p>ചോദ്യപേപ്പർ ലോഡ് ചെയ്യുന്നു...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: OMR / Answer Sheet -->
+        <div class="omr-pane">
+          <div class="omr-header">
+            <div class="student-badge">
+              <span>👤</span>
+              <span id="examStudentName">വിദ്യാർത്ഥി</span>
+              <span class="badge badge-primary" id="examStudentClassBadge">ക്ലാസ്സ്</span>
+            </div>
+            <div class="omr-summary">
+              ഉത്തരം നൽകിയത്: <span id="answeredCount">0</span> / 50
+            </div>
+          </div>
+
+          <div class="omr-grid-container">
+            <div class="omr-grid" id="omrGrid">
+              <!-- 50 question rows dynamically populated -->
+            </div>
+          </div>
+
+          <div class="omr-footer">
+            <button class="btn btn-outline" style="color: #64748b; border-color: #cbd5e1;" onclick="confirmResetExam()">റീസെറ്റ് ചെയ്യുക</button>
+            <button class="btn btn-success" style="font-size: 1.05rem;" onclick="submitExam()">
+              പരീക്ഷ സമർപ്പിക്കുക (Submit) ✔
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. Result View -->
+    <section id="viewResult" class="view-section" style="display: none;">
+      <div class="result-card">
+        <h2 style="color: var(--primary); margin-bottom: 8px;">സെന്റ് ജോർജ് സൺഡേ സ്കൂൾ, കാര്യമ്പാടി</h2>
+        <h3>യൂണിറ്റ് പരീക്ഷാ ഫലം (Unit Test Result)</h3>
+        
+        <div style="margin: 1.5rem 0; font-size: 1.1rem; line-height: 1.8;">
+          <p>വിദ്യാർത്ഥിയുടെ പേര്: <strong id="resStudentName">-</strong></p>
+          <p>റോൾ നമ്പർ: <strong id="resRollNo">-</strong> | ക്ലാസ്സ്: <strong id="resClass">-</strong></p>
+          <p>തീയതി: <span id="resDate">-</span></p>
+        </div>
+
+        <div class="score-circle">
+          <div class="score-val" id="resScore">0</div>
+          <div class="score-max">ആകെ മാർക്ക്: / 50</div>
+        </div>
+
+        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 2rem;">
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px 18px; border-radius: 8px;">
+            <div style="color: var(--success); font-weight: bold; font-size: 1.2rem;" id="resCorrect">0</div>
+            <div style="font-size: 0.9rem; color: #166534;">ശരിയുത്തരങ്ങൾ</div>
+          </div>
+          <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 10px 18px; border-radius: 8px;">
+            <div style="color: var(--danger); font-weight: bold; font-size: 1.2rem;" id="resWrong">0</div>
+            <div style="font-size: 0.9rem; color: #991b1b;">തെറ്റായവ</div>
+          </div>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px 18px; border-radius: 8px;">
+            <div style="color: #64748b; font-weight: bold; font-size: 1.2rem;" id="resUnattempted">0</div>
+            <div style="font-size: 0.9rem; color: #475569;">ഉത്തരമെഴുതാത്തവ</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: center;" class="no-print">
+          <button class="btn btn-outline" style="color: var(--text); border-color: #cbd5e1;" onclick="toggleAnswerReview()">ഉത്തരങ്ങൾ പരിശോധിക്കുക (Review Answers)</button>
+          <button class="btn btn-primary" onclick="window.print()">പ്രിന്റ് / സേവ് ചെയ്യുക 🖨️</button>
+          <button class="btn btn-gold" onclick="switchView('studentRegister')">പുതിയ പരീക്ഷ ➔</button>
+        </div>
+
+        <!-- Detailed Review Section -->
+        <div id="reviewContainer" style="display: none; margin-top: 2rem; text-align: left;">
+          <h4 style="margin-bottom: 1rem; color: var(--primary);">ഉത്തരസൂചികയുമായുള്ള താരതമ്യ പരിശോധന (Answer Verification):</h4>
+          <div id="reviewGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; max-height: 300px; overflow-y: auto; padding: 8px; border: 1px solid var(--border); border-radius: 8px;">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Admin Management Section -->
+    <section id="viewAdmin" class="view-section" style="display: none;">
+      <div class="view-card admin-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border); padding-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h2 style="color: var(--primary);">അഡ്മിൻ കൺട്രോൾ പാനൽ (Admin Panel)</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">ചോദ്യപേപ്പർ & ഉത്തരസൂചിക PDF അപ്‌ലോഡ്, വിദ്യാർത്ഥികളുടെ പേരുകൾ രജിസ്റ്റർ ചെയ്യൽ, മാർക്ക് ലിസ്റ്റ്</p>
+          </div>
+          <button class="btn btn-outline" style="color: var(--text); border-color: #cbd5e1;" onclick="switchView('studentRegister')">മടങ്ങുക (Exit)</button>
+        </div>
+
+        <div class="admin-tabs">
+          <button class="tab-btn active" onclick="switchAdminTab('uploadTab')">1. ചോദ്യപേപ്പർ & ഉത്തരസൂചിക (Question & Key PDFs)</button>
+          <button class="tab-btn" onclick="switchAdminTab('studentsTab')">2. വിദ്യാർത്ഥികളുടെ പേരുകൾ (Student Roster)</button>
+          <button class="tab-btn" onclick="switchAdminTab('resultsTab')">3. പരീക്ഷാ മാർക്ക് ലിസ്റ്റ് (Results & Marks)</button>
+        </div>
+
+        <!-- Tab 1: Uploads (Question Paper PDF & Answer Key PDF / Manual) -->
+        <div id="adminTabUpload">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px;">
+            
+            <!-- Class 1 Slot -->
+            <div style="background: #fafafa; border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem;">
+              <h3 style="color: var(--primary); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <span>പേപ്പർ 1 (Class A)</span>
+                <div>
+                  <span class="badge" id="badgePaperA">ചോദ്യപേപ്പർ: ലഭ്യമല്ല</span>
+                  <span class="badge" id="badgeKeyA" style="margin-left: 4px;">കീ: ഡിഫോൾട്ട്</span>
+                </div>
+              </h3>
+              
+              <div class="form-group">
+                <label>ക്ലാസ്സിന്റെ പേര് / വിവരണം (Class Title)</label>
+                <input type="text" id="namePaperA" class="form-control" value="ക്ലാസ്സ് 1 (Class 1)">
+              </div>
+
+              <!-- Question Paper PDF Upload -->
+              <div class="upload-card-box">
+                <label style="font-weight: bold; color: #1e293b; display: block; margin-bottom: 4px;">
+                  1. ചോദ്യപേപ്പർ PDF (50 Questions)
+                </label>
+                <input type="file" id="filePaperA" accept="application/pdf" class="form-control" onchange="handlePdfUpload('classA', event)">
+                <small style="color: var(--text-muted); display: block; margin-top: 4px;">വിദ്യാർത്ഥിക്ക് സ്ക്രീനിൽ ഇടത് വശത്ത് കാണാനുള്ള ചോദ്യപേപ്പർ.</small>
+              </div>
+
+              <!-- Answer Key PDF Upload & Auto-Parser -->
+              <div class="upload-card-box" style="background: #fdfefe; border-color: #cbd5e1;">
+                <label style="font-weight: bold; color: var(--primary); display: block; margin-bottom: 4px;">
+                  2. ഉത്തരസൂചിക PDF അപ്‌ലോഡ് (Answer Key PDF Upload)
+                </label>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 8px;">
+                  ചോദ്യ നമ്പറും ശരിയുത്തരവും അടങ്ങിയ PDF (ഉദാ: 1-A, 2-B, 3-C...) അപ്‌ലോഡ് ചെയ്താൽ ആപ്പ് തനിയെ 50 ഉത്തരങ്ങളും തിരിച്ചറിയും.
+                </p>
+                <input type="file" id="fileKeyA" accept="application/pdf,.txt" class="form-control" onchange="handleAnswerKeyPdfUpload('classA', event)">
+              </div>
+
+              <!-- Answer key manual inspection / adjustments -->
+              <div class="form-group" style="margin-top: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <label style="font-weight: bold; margin-bottom: 0;">നിലവിലെ ഉത്തരസൂചിക (50 Questions Key):</label>
+                  <div style="display: flex; gap: 5px;">
+                    <button type="button" class="btn btn-sm btn-outline" style="color: var(--primary); border-color: var(--primary);" onclick="importKeyPrompt('classA')">പേസ്റ്റ് ചെയ്യുക</button>
+                  </div>
+                </div>
+                <div class="key-grid" id="keyGridClassA"></div>
+              </div>
+
+              <button class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="saveClassConfig('classA')">ക്ലാസ്സ് 1 ക്രമീകരണങ്ങൾ സേവ് ചെയ്യുക 💾</button>
+            </div>
+
+            <!-- Class 2 Slot -->
+            <div style="background: #fafafa; border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem;">
+              <h3 style="color: var(--primary); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <span>പേപ്പർ 2 (Class B)</span>
+                <div>
+                  <span class="badge" id="badgePaperB">ചോദ്യപേപ്പർ: ലഭ്യമല്ല</span>
+                  <span class="badge" id="badgeKeyB" style="margin-left: 4px;">കീ: ഡിഫോൾട്ട്</span>
+                </div>
+              </h3>
+              
+              <div class="form-group">
+                <label>ക്ലാസ്സിന്റെ പേര് / വിവരണം (Class Title)</label>
+                <input type="text" id="namePaperB" class="form-control" value="ക്ലാസ്സ് 2 (Class 2)">
+              </div>
+
+              <!-- Question Paper PDF Upload -->
+              <div class="upload-card-box">
+                <label style="font-weight: bold; color: #1e293b; display: block; margin-bottom: 4px;">
+                  1. ചോദ്യപേപ്പർ PDF (50 Questions)
+                </label>
+                <input type="file" id="filePaperB" accept="application/pdf" class="form-control" onchange="handlePdfUpload('classB', event)">
+                <small style="color: var(--text-muted); display: block; margin-top: 4px;">വിദ്യാർത്ഥിക്ക് സ്ക്രീനിൽ ഇടത് വശത്ത് കാണാനുള്ള ചോദ്യപേപ്പർ.</small>
+              </div>
+
+              <!-- Answer Key PDF Upload & Auto-Parser -->
+              <div class="upload-card-box" style="background: #fdfefe; border-color: #cbd5e1;">
+                <label style="font-weight: bold; color: var(--primary); display: block; margin-bottom: 4px;">
+                  2. ഉത്തരസൂചിക PDF അപ്‌ലോഡ് (Answer Key PDF Upload)
+                </label>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 8px;">
+                  ചോദ്യ നമ്പറും ശരിയുത്തരവും അടങ്ങിയ PDF (ഉദാ: 1-A, 2-B, 3-C...) അപ്‌ലോഡ് ചെയ്താൽ ആപ്പ് തനിയെ 50 ഉത്തരങ്ങളും തിരിച്ചറിയും.
+                </p>
+                <input type="file" id="fileKeyB" accept="application/pdf,.txt" class="form-control" onchange="handleAnswerKeyPdfUpload('classB', event)">
+              </div>
+
+              <!-- Answer key manual inspection / adjustments -->
+              <div class="form-group" style="margin-top: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <label style="font-weight: bold; margin-bottom: 0;">നിലവിലെ ഉത്തരസൂചിക (50 Questions Key):</label>
+                  <div style="display: flex; gap: 5px;">
+                    <button type="button" class="btn btn-sm btn-outline" style="color: var(--primary); border-color: var(--primary);" onclick="importKeyPrompt('classB')">പേസ്റ്റ് ചെയ്യുക</button>
+                  </div>
+                </div>
+                <div class="key-grid" id="keyGridClassB"></div>
+              </div>
+
+              <button class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="saveClassConfig('classB')">ക്ലാസ്സ് 2 ക്രമീകരണങ്ങൾ സേവ് ചെയ്യുക 💾</button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Tab 2: Student Roster Management (Admin's right to enter student names) -->
+        <div id="adminTabStudents" style="display: none;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            
+            <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem;">
+              <h3 style="color: var(--primary); margin-bottom: 12px;">പുതിയ വിദ്യാർത്ഥിയെ ചേർക്കുക</h3>
+              <form onsubmit="addStudentFromAdmin(event)">
+                <div class="form-group">
+                  <label>വിദ്യാർത്ഥിയുടെ ക്ലാസ്സ് (Class 1 - 12) *</label>
+                  <select id="adminStudentGrade" class="form-control" required>
+                    <option value="ക്ലാസ്സ് 1">ക്ലാസ്സ് 1</option>
+                    <option value="ക്ലാസ്സ് 2">ക്ലാസ്സ് 2</option>
+                    <option value="ക്ലാസ്സ് 3">ക്ലാസ്സ് 3</option>
+                    <option value="ക്ലാസ്സ് 4">ക്ലാസ്സ് 4</option>
+                    <option value="ക്ലാസ്സ് 5">ക്ലാസ്സ് 5</option>
+                    <option value="ക്ലാസ്സ് 6">ക്ലാസ്സ് 6</option>
+                    <option value="ക്ലാസ്സ് 7">ക്ലാസ്സ് 7</option>
+                    <option value="ക്ലാസ്സ് 8">ക്ലാസ്സ് 8</option>
+                    <option value="ക്ലാസ്സ് 9">ക്ലാസ്സ് 9</option>
+                    <option value="ക്ലാസ്സ് 10">ക്ലാസ്സ് 10</option>
+                    <option value="ക്ലാസ്സ് 11">ക്ലാസ്സ് 11</option>
+                    <option value="ക്ലാസ്സ് 12">ക്ലാസ്സ് 12</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>ചോദ്യപേപ്പർ സ്ലോട്ട് (Question Paper) *</label>
+                  <select id="adminStudentClass" class="form-control" required>
+                    <option value="classA">പേപ്പർ 1 (Paper A)</option>
+                    <option value="classB">പേപ്പർ 2 (Paper B)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>വിദ്യാർത്ഥിയുടെ പേര് (Student's Name) *</label>
+                  <input type="text" id="adminStudentName" class="form-control" placeholder="വിദ്യാർത്ഥിയുടെ പേര്" required>
+                </div>
+                <div class="form-group">
+                  <label>റോൾ നമ്പർ (Roll No)</label>
+                  <input type="text" id="adminStudentRoll" class="form-control" placeholder="റോൾ നമ്പർ">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">വിദ്യാർത്ഥിയെ ചേർക്കുക ➕</button>
+              </form>
+
+              <hr style="margin: 1.5rem 0; border: none; border-top: 1px dashed var(--border);">
+
+              <h4 style="color: #334155; margin-bottom: 8px;">ഒന്നിലധികം പേരുകൾ ഒരുമിച്ച് ചേർക്കാൻ (Bulk Paste)</h4>
+              <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 8px;">ഓരോ വരിയിലും ഓരോ വിദ്യാർത്ഥിയുടെ പേര് നൽകി ചേർക്കാം:</p>
+              <textarea id="bulkStudentsText" class="form-control" rows="4" placeholder="വിദ്യാർത്ഥി 1&#10;വിദ്യാർത്ഥി 2&#10;വിദ്യാർത്ഥി 3"></textarea>
+              <button class="btn btn-outline" style="color: var(--primary); border-color: var(--primary); margin-top: 8px; width: 100%; justify-content: center;" onclick="addBulkStudents()">ഒരുമിച്ച് ലിസ്റ്റിലേക്ക് ചേർക്കുക 📋</button>
+            </div>
+
+            <!-- Student List Table -->
+            <div style="background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="color: var(--primary);">രജിസ്റ്റർ ചെയ്ത വിദ്യാർത്ഥികൾ (<span id="totalStudentsCount">0</span>)</h3>
+                <button class="btn btn-sm btn-outline" style="color: var(--danger); border-color: #fca5a5;" onclick="clearAllStudents()">എല്ലാം നീക്കം ചെയ്യുക</button>
+              </div>
+              <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 10px;">
+                അഡ്മിൻ പേരുകൾ ചേർത്താൽ, വിദ്യാർത്ഥിക്ക് രജിസ്ട്രേഷൻ പേജിൽ നിന്ന് സ്വന്തം പേര് ഡ്രോപ്പ്ഡൗണിൽ നിന്ന് സെലക്ട് ചെയ്യാൻ സാധിക്കും.
+              </p>
+              <div style="max-height: 440px; overflow-y: auto;">
+                <table style="width: 100%;">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>പേര്</th>
+                      <th>റോൾ നമ്പർ</th>
+                      <th>ക്ലാസ്സ്</th>
+                      <th>ആക്ഷൻ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="studentRosterBody">
+                    <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">വിദ്യാർത്ഥികളുടെ പേരുകൾ ചേർത്തിട്ടില്ല</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Tab 3: Results Table -->
+        <div id="adminTabResults" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
+            <div>ആകെ പരീക്ഷ എഴുതിയവർ: <strong id="totalSubmissionsCount">0</strong></div>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-success" onclick="exportResultsExcel()">എക്സലിലേക്ക് മാറ്റുക (Export to Excel) 📊</button>
+              <button class="btn btn-outline" style="color: var(--danger); border-color: #fca5a5;" onclick="clearAllResults()">ഫലങ്ങൾ ക്ലിയർ ചെയ്യുക</button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>തീയതി & സമയം</th>
+                  <th>വിദ്യാർത്ഥിയുടെ പേര്</th>
+                  <th>റോൾ നമ്പർ</th>
+                  <th>ക്ലാസ്സ്</th>
+                  <th>മാർക്ക് (50-ൽ)</th>
+                  <th>ശതമാനം (%)</th>
+                  <th>ശരി / തെറ്റ്</th>
+                  <th>വിശദാംശങ്ങൾ</th>
+                </tr>
+              </thead>
+              <tbody id="resultsTableBody">
+                <tr>
+                  <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 2rem;">പരീക്ഷാ ഫലങ്ങൾ ഒന്നും ലഭ്യമല്ല</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Admin Login Modal -->
+  <div id="adminLoginModal" class="modal-backdrop" style="display: none;">
+    <div class="modal-content">
+      <h3 style="color: var(--primary); margin-bottom: 1rem;">അഡ്മിൻ പ്രവേശനം (Admin Login)</h3>
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.2rem;">അഡ്മിൻ പാസ്‌വേഡ് രേഖപ്പെടുത്തുക (ഡിഫോൾട്ട് പാസ്‌വേഡ്: <strong>admin123</strong>)</p>
+      
+      <form onsubmit="verifyAdminPass(event)">
+        <div class="form-group">
+          <input type="password" id="adminPassInput" class="form-control" placeholder="പാസ്‌വേഡ് നൽകുക" required autofocus>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-outline" style="color: var(--text); border-color: #cbd5e1;" onclick="closeAdminModal()">റദ്ദാക്കുക</button>
+          <button type="submit" class="btn btn-primary">ലോഗിൻ ചെയ്യുക</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_CONFIG = {
+      adminPass: 'admin123',
+      classes: {
+        classA: {
+          id: 'classA',
+          name: 'ക്ലാസ്സ് 1 (Class 1)',
+          hasPdf: false,
+          pdfPath: null,
+          hasKeyPdf: false,
+          answerKey: Array(50).fill('A')
+        },
+        classB: {
+          id: 'classB',
+          name: 'ക്ലാസ്സ് 2 (Class 2)',
+          hasPdf: false,
+          pdfPath: null,
+          hasKeyPdf: false,
+          answerKey: Array(50).fill('B')
+        }
+      },
+      students: []
+    };
+
+    let appState = {
+      config: JSON.parse(localStorage.getItem('SS_CONFIG_V2')) || DEFAULT_CONFIG,
+      results: JSON.parse(localStorage.getItem('SS_RESULTS_V2')) || [],
+      currentStudent: null,
+      currentClassId: null,
+      studentAnswers: {},
+      pdfDoc: null,
+      pdfScale: 1.25,
+      cachedPdfs: {},
+      serverConnected: false
+    };
+
+    function saveLocalBackup() {
+      localStorage.setItem('SS_CONFIG_V2', JSON.stringify(appState.config));
+      localStorage.setItem('SS_RESULTS_V2', JSON.stringify(appState.results));
+    }
+
+    // Sync from permanent server database on load
+    async function syncFromServerDatabase() {
+      const badge = document.getElementById('syncStatusBadge');
+      try {
+        const res = await fetch('/api/data');
+        if (res.ok) {
+          const data = await res.json();
+          appState.config = data;
+          appState.results = data.results || [];
+          appState.serverConnected = true;
+          saveLocalBackup();
+          if (badge) {
+            badge.textContent = '🌐 ക്ലൗഡ് / സെർവർ ഡാറ്റാബേസ് ലൈവ്';
+            badge.className = 'badge badge-success';
+          }
+        } else {
+          throw new Error('Server returned ' + res.status);
+        }
+      } catch (e) {
+        console.warn('Working in local/offline fallback mode:', e);
+        appState.serverConnected = false;
+        if (badge) {
+          badge.textContent = '💾 ഓഫ്‌ലൈൻ / ലോക്കൽ മോഡ്';
+          badge.className = 'badge badge-warning';
+        }
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      await syncFromServerDatabase();
+      renderKeyInputs('classA');
+      renderKeyInputs('classB');
+      updateAdminStatusBadges();
+      populateClassSelect();
+      renderStudentsRoster();
+      loadResultsTable();
+    });
+
+    function renderKeyInputs(classId) {
+      const container = document.getElementById(classId === 'classA' ? 'keyGridClassA' : 'keyGridClassB');
+      container.innerHTML = '';
+      const keys = appState.config.classes[classId].answerKey;
+      
+      for (let i = 1; i <= 50; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'key-cell';
+        cell.innerHTML = `
+          <span>Q${i}</span>
+          <select id="${classId}_key_${i}">
+            <option value="A" ${keys[i-1] === 'A' ? 'selected' : ''}>A</option>
+            <option value="B" ${keys[i-1] === 'B' ? 'selected' : ''}>B</option>
+            <option value="C" ${keys[i-1] === 'C' ? 'selected' : ''}>C</option>
+            <option value="D" ${keys[i-1] === 'D' ? 'selected' : ''}>D</option>
+          </select>
+        `;
+        container.appendChild(cell);
+      }
+
+      const nameInput = document.getElementById(classId === 'classA' ? 'namePaperA' : 'namePaperB');
+      if (nameInput) nameInput.value = appState.config.classes[classId].name;
+    }
+
+    function importKeyPrompt(classId) {
+      const text = prompt('50 ഉത്തരങ്ങൾ കോമ/സ്പേസ് നൽകി ടൈപ്പ് ചെയ്യുക (ഉദാ: A, B, C, D, A...):');
+      if (!text) return;
+      const clean = text.replace(/[^A-Da-d]/g, '').toUpperCase().split('');
+      if (clean.length < 1) {
+        alert('ശരിയായ ഉത്തരങ്ങൾ കണ്ടെത്തിയില്ല.');
+        return;
+      }
+      for (let i = 1; i <= Math.min(50, clean.length); i++) {
+        const el = document.getElementById(`${classId}_key_${i}`);
+        if (el) el.value = clean[i-1];
+      }
+      alert(`${Math.min(50, clean.length)} ഉത്തരങ്ങൾ അപ്ഡേറ്റ് ചെയ്തു!`);
+    }
+
+    // Question Paper PDF Upload with permanent database persistence
+    async function handlePdfUpload(classId, event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (file.type !== 'application/pdf') {
+        alert('ദയവായി ഒരു PDF ഫയൽ തിരഞ്ഞെടുക്കുക.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const dataUrl = e.target.result;
+        try {
+          appState.cachedPdfs[classId] = dataUrl;
+          appState.config.classes[classId].hasPdf = true;
+
+          // Save to permanent server/cloud DB
+          if (appState.serverConnected) {
+            const resp = await fetch('/api/upload-pdf', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                classId: classId,
+                pdfBase64: dataUrl,
+                filename: file.name
+              })
+            });
+            const result = await resp.json();
+            if (result.success) {
+              appState.config.classes[classId].pdfPath = result.pdfUrl;
+            }
+          }
+
+          saveLocalBackup();
+          updateAdminStatusBadges();
+          populateClassSelect();
+          alert(`ചോദ്യപേപ്പർ സ്ഥിരമായി ഡാറ്റാബേസിൽ സേവ് ചെയ്തു: ${file.name}`);
+        } catch (err) {
+          console.error(err);
+          alert('PDF സൂക്ഷിക്കുന്നതിൽ തകരാർ സംഭവിച്ചു: ' + err.message);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // ANSWER KEY PDF UPLOAD & AUTOMATIC PARSING
+    async function handleAnswerKeyPdfUpload(classId, event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        let extractedText = '';
+
+        if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+            const page = await pdf.getPage(pageNum);
+            const content = await page.getTextContent();
+            const pageText = content.items.map(item => item.str).join(' ');
+            extractedText += ' ' + pageText;
+          }
+        } else {
+          // Plain text fallback
+          extractedText = await file.text();
+        }
+
+        // Parse Question Number and Option
+        // Matches patterns like "1. A", "1 - B", "1 : C", "1) D", "Q1 A", "1 A" etc.
+        const parsedKeys = {};
+        const regex = /(?:Q|q)?\s*([1-9]|[1-4][0-9]|50)\s*[\.\:\-\)\s]+\s*([A-Da-d])/g;
+        let match;
+        while ((match = regex.exec(extractedText)) !== null) {
+          const qNum = parseInt(match[1], 10);
+          const ans = match[2].toUpperCase();
+          if (qNum >= 1 && qNum <= 50) {
+            parsedKeys[qNum] = ans;
+          }
+        }
+
+        const foundCount = Object.keys(parsedKeys).length;
+
+        // If direct regex didn't find all, try secondary sequence scanner for standalone A, B, C, D
+        if (foundCount < 20) {
+          // Try scanning standalone letters
+          const tokens = extractedText.replace(/[^0-9A-Za-z]/g, ' ').split(/\s+/).filter(Boolean);
+          for (let i = 0; i < tokens.length - 1; i++) {
+            const num = parseInt(tokens[i], 10);
+            const letter = tokens[i+1].toUpperCase();
+            if (num >= 1 && num <= 50 && ['A', 'B', 'C', 'D'].includes(letter)) {
+              if (!parsedKeys[num]) parsedKeys[num] = letter;
+            }
+          }
+        }
+
+        const finalFoundCount = Object.keys(parsedKeys).length;
+
+        if (finalFoundCount > 0) {
+          // Apply to inputs
+          for (let i = 1; i <= 50; i++) {
+            if (parsedKeys[i]) {
+              const el = document.getElementById(`${classId}_key_${i}`);
+              if (el) el.value = parsedKeys[i];
+            }
+          }
+          appState.config.classes[classId].hasKeyPdf = true;
+          saveClassConfig(classId);
+          alert(`ഉത്തരസൂചിക PDF വിജയകരമായി പരിശോധിച്ചു! 50-ൽ ${finalFoundCount} ചോദ്യങ്ങളുടെ ശരിയുത്തരങ്ങൾ ഓട്ടോമാറ്റിക്കായി സെറ്റ് ചെയ്തിട്ടുണ്ട്.`);
+        } else {
+          alert('PDF-ൽ നിന്ന് ചോദ്യ നമ്പറും ഉത്തരങ്ങളും (ഉദാ: 1-A, 2-B) നേരിട്ട് വായിച്ചെടുക്കാൻ കഴിഞ്ഞില്ല. താഴെ കാണുന്ന ഗ്രിഡിൽ നേരിട്ടോ "പേസ്റ്റ് ചെയ്യുക" ബട്ടൺ ഉപയോഗിച്ചോ ഉത്തരങ്ങൾ നൽകാം.');
+        }
+
+      } catch (err) {
+        console.error('Answer key parse error:', err);
+        alert('ഉത്തരസൂചിക PDF വായിച്ചെടുക്കുന്നതിൽ തടസ്സം നേരിട്ടു: ' + err.message);
+      }
+    }
+
+    async function saveClassConfig(classId) {
+      const nameInput = document.getElementById(classId === 'classA' ? 'namePaperA' : 'namePaperB');
+      appState.config.classes[classId].name = nameInput.value.trim() || (classId === 'classA' ? 'ക്ലാസ്സ് 1' : 'ക്ലാസ്സ് 2');
+
+      const keys = [];
+      for (let i = 1; i <= 50; i++) {
+        const el = document.getElementById(`${classId}_key_${i}`);
+        keys.push(el ? el.value : 'A');
+      }
+      appState.config.classes[classId].answerKey = keys;
+
+      // Sync to permanent server database
+      if (appState.serverConnected) {
+        try {
+          await fetch('/api/class-config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              classId: classId,
+              name: appState.config.classes[classId].name,
+              answerKey: keys,
+              hasKeyPdf: appState.config.classes[classId].hasKeyPdf
+            })
+          });
+        } catch (e) {
+          console.error('Failed to sync class config to server:', e);
+        }
+      }
+
+      saveLocalBackup();
+      populateClassSelect();
+      updateAdminStatusBadges();
+      alert('വിവരങ്ങളും ഉത്തരസൂചികയും സ്ഥിരമായി ഡാറ്റാബേസിൽ സേവ് ചെയ്തു!');
+    }
+
+    function updateAdminStatusBadges() {
+      const bA = document.getElementById('badgePaperA');
+      const bB = document.getElementById('badgePaperB');
+      const kA = document.getElementById('badgeKeyA');
+      const kB = document.getElementById('badgeKeyB');
+
+      if (appState.config.classes.classA.hasPdf) {
+        bA.textContent = 'ചോദ്യപേപ്പർ: ലഭ്യമാണ് ✔';
+        bA.className = 'badge badge-success';
+      } else {
+        bA.textContent = 'ചോദ്യപേപ്പർ: ലഭ്യമല്ല ⚠️';
+        bA.className = 'badge badge-warning';
+      }
+
+      if (appState.config.classes.classA.hasKeyPdf) {
+        kA.textContent = 'കീ: PDF അപ്‌ലോഡ് ചെയ്തു ✔';
+        kA.className = 'badge badge-success';
+      } else {
+        kA.textContent = 'കീ: സജ്ജമാണ് ✔';
+        kA.className = 'badge badge-primary';
+      }
+
+      if (appState.config.classes.classB.hasPdf) {
+        bB.textContent = 'ചോദ്യപേപ്പർ: ലഭ്യമാണ് ✔';
+        bB.className = 'badge badge-success';
+      } else {
+        bB.textContent = 'ചോദ്യപേപ്പർ: ലഭ്യമല്ല ⚠️';
+        bB.className = 'badge badge-warning';
+      }
+
+      if (appState.config.classes.classB.hasKeyPdf) {
+        kB.textContent = 'കീ: PDF അപ്‌ലോഡ് ചെയ്തു ✔';
+        kB.className = 'badge badge-success';
+      } else {
+        kB.textContent = 'കീ: സജ്ജമാണ് ✔';
+        kB.className = 'badge badge-primary';
+      }
+    }
+
+    function populateClassSelect() {
+      const optA = document.getElementById('optClassA');
+      const optB = document.getElementById('optClassB');
+      optA.textContent = appState.config.classes.classA.name + (appState.config.classes.classA.hasPdf ? ' (PDF ലഭ്യമാണ്)' : ' (PDF ലഭ്യമല്ല)');
+      optB.textContent = appState.config.classes.classB.name + (appState.config.classes.classB.hasPdf ? ' (PDF ലഭ്യമാണ്)' : ' (PDF ലഭ്യമല്ല)');
+    }
+
+    function onClassSelected() {
+      const classId = document.getElementById('examClass').value;
+      const notice = document.getElementById('classNotice');
+      if (!classId) {
+        notice.textContent = '';
+        renderStudentInputField([]);
+        return;
+      }
+
+      if (!appState.config.classes[classId].hasPdf) {
+        notice.textContent = '⚠️ ശ്രദ്ധിക്കുക: അഡ്മിൻ ഈ ക്ലാസ്സിൻ്റെ ചോദ്യപേപ്പർ PDF അപ്‌ലോഡ് ചെയ്തിട്ടില്ല. അഡ്മിൻ പാനലിൽ നിന്ന് PDF അപ്‌ലോഡ് ചെയ്യുക.';
+        notice.style.color = 'var(--primary)';
+      } else {
+        notice.textContent = '✓ ചോദ്യപേപ്പർ ലഭ്യമാണ്.';
+        notice.style.color = 'var(--success)';
+      }
+
+      // Filter registered students for this class
+      const classStudents = (appState.config.students || []).filter(s => s.classId === classId);
+      renderStudentInputField(classStudents);
+    }
+
+    function renderStudentInputField(students) {
+      const wrapper = document.getElementById('studentSelectWrapper');
+      const hint = document.getElementById('rosterHint');
+
+      if (students && students.length > 0) {
+        let html = `
+          <select id="studentName" class="form-control" required onchange="onStudentDropdownChange(this)">
+            <option value="">-- പേര് തിരഞ്ഞെടുക്കുക (അഡ്മിൻ ലിസ്റ്റ്) --</option>
+        `;
+        students.forEach(s => {
+          html += `<option value="${escapeHtml(s.name)}" data-roll="${escapeHtml(s.roll || '')}">${escapeHtml(s.name)} ${s.roll ? `(റോൾ: ${s.roll})` : ''}</option>`;
+        });
+        html += `<option value="__custom__">➕ മറ്റൊരു പേര് ടൈപ്പ് ചെയ്യുക...</option></select>`;
+        wrapper.innerHTML = html;
+        hint.textContent = 'അഡ്മിൻ ചേർത്ത വിദ്യാർത്ഥികളുടെ ലിസ്റ്റിൽ നിന്ന് തിരഞ്ഞെടുക്കുക.';
+      } else {
+        wrapper.innerHTML = `<input type="text" id="studentName" class="form-control" placeholder="വിദ്യാർത്ഥിയുടെ പേര് ടൈപ്പ് ചെയ്യുക" required>`;
+        hint.textContent = 'വിദ്യാർത്ഥിയുടെ പേര് ടൈപ്പ് ചെയ്യുക.';
+      }
+    }
+
+    function onStudentDropdownChange(selectEl) {
+      if (selectEl.value === '__custom__') {
+        const customName = prompt('വിദ്യാർത്ഥിയുടെ പേര് നൽകുക:');
+        if (customName && customName.trim()) {
+          const opt = document.createElement('option');
+          opt.value = customName.trim();
+          opt.textContent = customName.trim();
+          opt.selected = true;
+          selectEl.insertBefore(opt, selectEl.lastElementChild);
+        } else {
+          selectEl.value = '';
+        }
+      } else {
+        const selectedOpt = selectEl.options[selectEl.selectedIndex];
+        const roll = selectedOpt.getAttribute('data-roll');
+        if (roll) {
+          document.getElementById('studentRoll').value = roll;
+        }
+      }
+    }
+
+    function escapeHtml(text) {
+      return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // STUDENT ROSTER MANAGEMENT (ADMIN)
+    async function syncStudentsToServer() {
+      if (appState.serverConnected) {
+        try {
+          await fetch('/api/students', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ students: appState.config.students })
+          });
+        } catch (e) {
+          console.error('Failed to sync students to server:', e);
+        }
+      }
+      saveLocalBackup();
+    }
+
+    async function addStudentFromAdmin(e) {
+      e.preventDefault();
+      const grade = document.getElementById('adminStudentGrade').value;
+      const classId = document.getElementById('adminStudentClass').value;
+      const name = document.getElementById('adminStudentName').value.trim();
+      const roll = document.getElementById('adminStudentRoll').value.trim();
+
+      if (!name) return;
+
+      if (!appState.config.students) appState.config.students = [];
+      appState.config.students.push({
+        id: 'STU_' + Date.now() + Math.random().toString(36).substr(2, 4),
+        grade,
+        classId,
+        name,
+        roll
+      });
+
+      await syncStudentsToServer();
+      renderStudentsRoster();
+      document.getElementById('adminStudentName').value = '';
+      document.getElementById('adminStudentRoll').value = '';
+      alert('വിദ്യാർത്ഥിയെ ലിസ്റ്റിലേക്ക് ചേർത്തു!');
+    }
+
+    async function addBulkStudents() {
+      const text = document.getElementById('bulkStudentsText').value.trim();
+      const classId = document.getElementById('adminStudentClass').value;
+      if (!text) {
+        alert('പേരുകൾ പേസ്റ്റ് ചെയ്യുക.');
+        return;
+      }
+
+      const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+      if (!appState.config.students) appState.config.students = [];
+
+      lines.forEach((line, idx) => {
+        appState.config.students.push({
+          id: 'STU_' + Date.now() + '_' + idx,
+          classId,
+          name: line,
+          roll: ''
+        });
+      });
+
+      await syncStudentsToServer();
+      renderStudentsRoster();
+      document.getElementById('bulkStudentsText').value = '';
+      alert(`${lines.length} വിദ്യാർത്ഥികളെ ചേർത്തു!`);
+    }
+
+    async function deleteStudent(id) {
+      if (confirm('ഈ വിദ്യാർത്ഥിയെ നീക്കം ചെയ്യണോ?')) {
+        appState.config.students = appState.config.students.filter(s => s.id !== id);
+        await syncStudentsToServer();
+        renderStudentsRoster();
+      }
+    }
+
+    async function clearAllStudents() {
+      if (confirm('മുഴുവൻ വിദ്യാർത്ഥികളുടെയും വിവരങ്ങൾ നീക്കം ചെയ്യണോ?')) {
+        appState.config.students = [];
+        await syncStudentsToServer();
+        renderStudentsRoster();
+      }
+    }
+
+    function renderStudentsRoster() {
+      const tbody = document.getElementById('studentRosterBody');
+      const countEl = document.getElementById('totalStudentsCount');
+      const list = appState.config.students || [];
+      countEl.textContent = list.length;
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">വിദ്യാർത്ഥികളുടെ പേരുകൾ ചേർത്തിട്ടില്ല</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = '';
+      list.forEach((s, idx) => {
+        const tr = document.createElement('tr');
+        const cName = s.grade ? `${s.grade} (${appState.config.classes[s.classId] ? appState.config.classes[s.classId].name : s.classId})` : (appState.config.classes[s.classId] ? appState.config.classes[s.classId].name : s.classId);
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td><strong>${escapeHtml(s.name)}</strong></td>
+          <td>${escapeHtml(s.roll || '-')}</td>
+          <td><span class="badge badge-primary">${escapeHtml(cName)}</span></td>
+          <td>
+            <button class="btn btn-sm btn-outline" style="color:var(--danger); border-color:#fca5a5;" onclick="deleteStudent('${s.id}')">✕</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // View Switching Logic
+    function switchView(viewId) {
+      document.getElementById('viewStudentRegister').style.display = 'none';
+      document.getElementById('viewExamInterface').style.display = 'none';
+      document.getElementById('viewResult').style.display = 'none';
+      document.getElementById('viewAdmin').style.display = 'none';
+
+      if (viewId === 'studentRegister') document.getElementById('viewStudentRegister').style.display = 'block';
+      if (viewId === 'examInterface') document.getElementById('viewExamInterface').style.display = 'block';
+      if (viewId === 'result') document.getElementById('viewResult').style.display = 'block';
+      if (viewId === 'admin') document.getElementById('viewAdmin').style.display = 'block';
+    }
+
+    function openAdminModal() {
+      document.getElementById('adminLoginModal').style.display = 'flex';
+      document.getElementById('adminPassInput').value = '';
+    }
+
+    function closeAdminModal() {
+      document.getElementById('adminLoginModal').style.display = 'none';
+    }
+
+    function verifyAdminPass(e) {
+      e.preventDefault();
+      const pass = document.getElementById('adminPassInput').value;
+      if (pass === appState.config.adminPass) {
+        closeAdminModal();
+        switchView('admin');
+      } else {
+        alert('തെറ്റായ പാസ്‌വേഡ്! ദയവായി ശരിയായ പാസ്‌വേഡ് നൽകുക.');
+      }
+    }
+
+    function switchAdminTab(tab) {
+      const tabUpload = document.getElementById('adminTabUpload');
+      const tabStudents = document.getElementById('adminTabStudents');
+      const tabResults = document.getElementById('adminTabResults');
+      const btns = document.querySelectorAll('.admin-tabs .tab-btn');
+
+      tabUpload.style.display = 'none';
+      tabStudents.style.display = 'none';
+      tabResults.style.display = 'none';
+      btns.forEach(b => b.classList.remove('active'));
+
+      if (tab === 'uploadTab') {
+        tabUpload.style.display = 'block';
+        btns[0].classList.add('active');
+      } else if (tab === 'studentsTab') {
+        tabStudents.style.display = 'block';
+        btns[1].classList.add('active');
+        renderStudentsRoster();
+      } else {
+        tabResults.style.display = 'block';
+        btns[2].classList.add('active');
+        loadResultsTable();
+      }
+    }
+
+    // EXAM LOGIC
+    async function startExam(e) {
+      e.preventDefault();
+      const nameEl = document.getElementById('studentName');
+      const name = nameEl.value.trim();
+      const roll = document.getElementById('studentRoll').value.trim();
+      const classId = document.getElementById('examClass').value;
+      const studentGrade = document.getElementById('studentGrade').value;
+
+      if (!name || !classId || !studentGrade) {
+        alert('വിദ്യാർത്ഥിയുടെ പേര്, ക്ലാസ്സ് (1 - 12), ചോദ്യപേപ്പർ എന്നിവ നിർബന്ധമാണ്.');
+        return;
+      }
+
+      appState.currentStudent = { name, roll, grade: studentGrade };
+      appState.currentClassId = classId;
+      appState.studentAnswers = {};
+
+      document.getElementById('examStudentName').textContent = name;
+      document.getElementById('examStudentClassBadge').textContent = `${studentGrade} (${appState.config.classes[classId].name})`;
+      document.getElementById('pdfPaperTitle').textContent = `📄 ${appState.config.classes[classId].name} - ചോദ്യപേപ്പർ`;
+
+      buildOmrGrid();
+      switchView('examInterface');
+      await loadExamPdf(classId);
+    }
+
+    function buildOmrGrid() {
+      const container = document.getElementById('omrGrid');
+      container.innerHTML = '';
+      const options = ['A', 'B', 'C', 'D'];
+
+      for (let i = 1; i <= 50; i++) {
+        const row = document.createElement('div');
+        row.className = 'q-row';
+        row.id = `q_row_${i}`;
+
+        const qNum = document.createElement('div');
+        qNum.className = 'q-num';
+        qNum.textContent = `Q ${i}.`;
+
+        const optGroup = document.createElement('div');
+        optGroup.className = 'options-group';
+
+        options.forEach(opt => {
+          const bubble = document.createElement('div');
+          bubble.className = 'opt-bubble';
+          bubble.id = `bubble_${i}_${opt}`;
+          bubble.textContent = opt;
+          bubble.onclick = () => selectOption(i, opt);
+          optGroup.appendChild(bubble);
+        });
+
+        const clearBtn = document.createElement('div');
+        clearBtn.className = 'opt-bubble clear-btn';
+        clearBtn.title = 'ഉത്തരം ഒഴിവാക്കുക';
+        clearBtn.textContent = '✕';
+        clearBtn.onclick = () => selectOption(i, null);
+        optGroup.appendChild(clearBtn);
+
+        row.appendChild(qNum);
+        row.appendChild(optGroup);
+        container.appendChild(row);
+      }
+
+      updateAnsweredCount();
+    }
+
+    function selectOption(qNum, opt) {
+      if (opt === null) {
+        delete appState.studentAnswers[qNum];
+      } else {
+        appState.studentAnswers[qNum] = opt;
+      }
+
+      ['A', 'B', 'C', 'D'].forEach(letter => {
+        const b = document.getElementById(`bubble_${qNum}_${letter}`);
+        if (b) {
+          if (letter === opt) {
+            b.classList.add('selected');
+          } else {
+            b.classList.remove('selected');
+          }
+        }
+      });
+
+      const row = document.getElementById(`q_row_${qNum}`);
+      if (opt !== null) {
+        row.classList.add('answered');
+      } else {
+        row.classList.remove('answered');
+      }
+
+      updateAnsweredCount();
+    }
+
+    function updateAnsweredCount() {
+      const count = Object.keys(appState.studentAnswers).length;
+      document.getElementById('answeredCount').textContent = count;
+    }
+
+    async function loadExamPdf(classId) {
+      const pdfContainer = document.getElementById('pdfContainer');
+      pdfContainer.innerHTML = '<div style="color:white; margin-top:40px; text-align:center;">ചോദ്യപേപ്പർ തുറക്കുന്നു...</div>';
+
+      try {
+        let pdfSource = appState.cachedPdfs[classId];
+
+        // If not cached in memory, check server PDF URL
+        if (!pdfSource && appState.config.classes[classId].pdfPath) {
+          pdfSource = appState.config.classes[classId].pdfPath;
+        }
+
+        if (!pdfSource) {
+          renderPdfFallbackNotice(classId);
+          return;
+        }
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        const loadingTask = pdfjsLib.getDocument(pdfSource);
+        appState.pdfDoc = await loadingTask.promise;
+        document.getElementById('pdfPageCount').textContent = appState.pdfDoc.numPages;
+        
+        await renderAllPdfPages();
+
+      } catch (err) {
+        console.error('PDF load error:', err);
+        pdfContainer.innerHTML = `
+          <div style="background: #ef4444; color:white; padding: 20px; border-radius: 8px; margin: 20px; text-align: center;">
+            <h3>PDF ലോഡ് ചെയ്യുന്നതിൽ തടസ്സം നേരിട്ടു</h3>
+            <p>അഡ്മിൻ പാനലിൽ നിന്ന് ചോദ്യപേപ്പർ PDF ശരിയായി അപ്‌ലോഡ് ചെയ്തിട്ടുണ്ടെന്ന് ഉറപ്പുവരുത്തുക.</p>
+          </div>
+        `;
+      }
+    }
+
+    async function renderAllPdfPages() {
+      const pdfContainer = document.getElementById('pdfContainer');
+      pdfContainer.innerHTML = '';
+
+      for (let pageNum = 1; pageNum <= appState.pdfDoc.numPages; pageNum++) {
+        const page = await appState.pdfDoc.getPage(pageNum);
+        const viewport = page.getViewport({ scale: appState.pdfScale });
+
+        const canvas = document.createElement('canvas');
+        canvas.className = 'pdf-page-canvas';
+        canvas.id = `pdf_page_${pageNum}`;
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        pdfContainer.appendChild(canvas);
+
+        const renderContext = {
+          canvasContext: context,
+          viewport: viewport
+        };
+        await page.render(renderContext).promise;
+      }
+    }
+
+    function renderPdfFallbackNotice(classId) {
+      const pdfContainer = document.getElementById('pdfContainer');
+      pdfContainer.innerHTML = `
+        <div style="background: white; border-radius: 12px; padding: 2.5rem; margin: 20px auto; max-width: 500px; text-align: center; box-shadow: var(--shadow-lg);">
+          <div style="font-size: 3rem; margin-bottom: 10px;">📄</div>
+          <h3 style="color: var(--primary); margin-bottom: 8px;">ചോദ്യപേപ്പർ PDF അപ്‌ലോഡ് ചെയ്തിട്ടില്ല</h3>
+          <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem;">
+            ${appState.config.classes[classId].name} ക്ലാസ്സിനായുള്ള 50 ചോദ്യങ്ങളുടെ PDF അഡ്മിൻ പാനലിൽ അപ്‌ലോഡ് ചെയ്യേണ്ടതുണ്ട്.
+          </p>
+          <button class="btn btn-gold" onclick="openAdminModal()">⚙️ അഡ്മിൻ പാനലിൽ PDF അപ്‌ലോഡ് ചെയ്യുക</button>
+        </div>
+      `;
+    }
+
+    function zoomPdf(delta) {
+      appState.pdfScale = Math.max(0.6, Math.min(2.5, appState.pdfScale + delta));
+      if (appState.pdfDoc) {
+        renderAllPdfPages();
+      }
+    }
+
+    function prevPdfPage() {
+      const container = document.getElementById('pdfContainer');
+      container.scrollTop -= 400;
+    }
+
+    function nextPdfPage() {
+      const container = document.getElementById('pdfContainer');
+      container.scrollTop += 400;
+    }
+
+    function confirmResetExam() {
+      if (confirm('എല്ലാ ഉത്തരങ്ങളും ഒഴിവാക്കി ആദ്യം മുതൽ തുടങ്ങണമെന്നുണ്ടോ?')) {
+        appState.studentAnswers = {};
+        buildOmrGrid();
+      }
+    }
+
+    // Submit Exam & Calculate Total Marks based on the Verified Answer Key
+    function submitExam() {
+      const answeredCount = Object.keys(appState.studentAnswers).length;
+      if (answeredCount < 50) {
+        const proceed = confirm(`നിങ്ങൾ 50 ചോദ്യങ്ങളിൽ ${answeredCount} ചോദ്യങ്ങൾക്ക് മാത്രമേ ഉത്തരം നൽകിയിട്ടുള്ളൂ. പരീക്ഷ സമർപ്പിക്കാൻ ഉറപ്പാണോ?`);
+        if (!proceed) return;
+      } else {
+        const proceed = confirm('നിങ്ങൾ 50 ചോദ്യങ്ങൾക്കും ഉത്തരം നൽകിയിട്ടുണ്ട്. പരീക്ഷ സമർപ്പിക്കാൻ ഉറപ്പാണോ?');
+        if (!proceed) return;
+      }
+
+      // Verification with Answer Key
+      const classId = appState.currentClassId;
+      const key = appState.config.classes[classId].answerKey;
+      let correct = 0;
+      let wrong = 0;
+      let unattempted = 0;
+
+      for (let i = 1; i <= 50; i++) {
+        const ans = appState.studentAnswers[i];
+        const correctAns = key[i - 1];
+
+        if (!ans) {
+          unattempted++;
+        } else if (ans === correctAns) {
+          correct++;
+        } else {
+          wrong++;
+        }
+      }
+
+      const totalMarks = correct;
+      const percentage = ((totalMarks / 50) * 100).toFixed(1);
+
+      const submissionRecord = {
+        id: 'SUB_' + Date.now(),
+        date: new Date().toLocaleString('ml-IN', { timeZone: 'Asia/Kolkata' }),
+        timestamp: Date.now(),
+        name: appState.currentStudent.name,
+        roll: appState.currentStudent.roll || 'N/A',
+        grade: appState.currentStudent.grade || '',
+        classId: classId,
+        className: `${appState.currentStudent.grade ? appState.currentStudent.grade + ' - ' : ''}${appState.config.classes[classId].name}`,
+        score: totalMarks,
+        maxScore: 50,
+        percentage: percentage,
+        correct: correct,
+        wrong: wrong,
+        unattempted: unattempted,
+        answers: { ...appState.studentAnswers }
+      };
+
+      appState.results.unshift(submissionRecord);
+      saveLocalBackup();
+
+      // Submit permanently to server/cloud database
+      if (appState.serverConnected) {
+        fetch('/api/submit-result', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(submissionRecord)
+        }).catch(err => console.error('Error syncing result to server:', err));
+      }
+
+      displayResults(submissionRecord);
+    }
+
+    function displayResults(record) {
+      document.getElementById('resStudentName').textContent = record.name;
+      document.getElementById('resRollNo').textContent = record.roll;
+      document.getElementById('resClass').textContent = record.className;
+      document.getElementById('resDate').textContent = record.date;
+      document.getElementById('resScore').textContent = record.score;
+      document.getElementById('resCorrect').textContent = record.correct;
+      document.getElementById('resWrong').textContent = record.wrong;
+      document.getElementById('resUnattempted').textContent = record.unattempted;
+
+      // Review grid compared with uploaded Answer Key
+      const reviewGrid = document.getElementById('reviewGrid');
+      reviewGrid.innerHTML = '';
+      const key = appState.config.classes[record.classId].answerKey;
+
+      for (let i = 1; i <= 50; i++) {
+        const studentAns = record.answers[i] || '-';
+        const correctAns = key[i - 1];
+        const isRight = studentAns === correctAns;
+
+        const cell = document.createElement('div');
+        cell.style.padding = '6px 8px';
+        cell.style.borderRadius = '6px';
+        cell.style.fontSize = '0.85rem';
+        cell.style.border = '1px solid #cbd5e1';
+        cell.style.background = isRight ? '#f0fdf4' : (studentAns === '-' ? '#f8fafc' : '#fef2f2');
+
+        cell.innerHTML = `
+          <strong>Q${i}:</strong> ${studentAns} 
+          <span style="color:${isRight ? '#16a34a' : '#dc2626'}">${isRight ? '✓' : '✗'}</span>
+          <small style="color:#64748b; display:block;">(ശരി: <strong>${correctAns}</strong>)</small>
+        `;
+        reviewGrid.appendChild(cell);
+      }
+
+      switchView('result');
+
+      if (record.score >= 30 && typeof confetti === 'function') {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+
+    function toggleAnswerReview() {
+      const el = document.getElementById('reviewContainer');
+      el.style.display = (el.style.display === 'none') ? 'block' : 'none';
+    }
+
+    function loadResultsTable() {
+      const tbody = document.getElementById('resultsTableBody');
+      const countEl = document.getElementById('totalSubmissionsCount');
+      countEl.textContent = appState.results.length;
+
+      if (appState.results.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 2rem;">പരീക്ഷാ ഫലങ്ങൾ ഒന്നും ലഭ്യമല്ല</td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = '';
+      appState.results.forEach((r, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td>${r.date}</td>
+          <td><strong>${escapeHtml(r.name)}</strong></td>
+          <td>${escapeHtml(r.roll)}</td>
+          <td>${escapeHtml(r.className)}</td>
+          <td style="font-weight:bold; color:var(--primary); font-size:1.05rem;">${r.score} / 50</td>
+          <td><span class="badge ${r.percentage >= 50 ? 'badge-success' : 'badge-primary'}">${r.percentage}%</span></td>
+          <td><span style="color:var(--success)">${r.correct} ✓</span> / <span style="color:var(--danger)">${r.wrong} ✗</span></td>
+          <td>
+            <button class="btn btn-sm btn-outline" style="color:var(--primary); border-color:var(--primary);" onclick="viewDetailedSubmission('${r.id}')">പരിശോധിക്കുക</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function viewDetailedSubmission(id) {
+      const r = appState.results.find(item => item.id === id);
+      if (r) {
+        displayResults(r);
+      }
+    }
+
+    async function clearAllResults() {
+      if (confirm('എല്ലാ പരീക്ഷാ ഫലങ്ങളും സ്ഥിരമായി നീക്കം ചെയ്യണോ?')) {
+        appState.results = [];
+        if (appState.serverConnected) {
+          try {
+            await fetch('/api/clear-results', { method: 'POST' });
+          } catch (e) {
+            console.error('Error clearing results on server:', e);
+          }
+        }
+        saveLocalBackup();
+        loadResultsTable();
+      }
+    }
+
+    function exportResultsExcel() {
+      if (appState.results.length === 0) {
+        alert('എക്സ്പോർട്ട് ചെയ്യാൻ ഫലങ്ങൾ ലഭ്യമല്ല.');
+        return;
+      }
+
+      const rows = appState.results.map((r, i) => {
+        const rowObj = {
+          'No': i + 1,
+          'Date': r.date,
+          'Student Name': r.name,
+          'Roll No': r.roll,
+          'Class': r.className,
+          'Total Marks': r.score,
+          'Max Marks': 50,
+          'Percentage (%)': r.percentage + '%',
+          'Correct': r.correct,
+          'Wrong': r.wrong,
+          'Unattempted': r.unattempted
+        };
+        for (let q = 1; q <= 50; q++) {
+          rowObj[`Q${q}`] = r.answers[q] || '';
+        }
+        return rowObj;
+      });
+
+      const ws = XLSX.utils.json_to_sheet(rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Unit Test Results');
+      XLSX.writeFile(wb, 'St_George_Sunday_School_Karyambadi_Results.xlsx');
+    }
+  </script>
+</body>
+</html>

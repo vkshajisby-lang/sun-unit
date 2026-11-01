@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>സെന്റ്. ജോർജ് സൺഡേ സ്കൂൾ, കാര്യമ്പാടി -അർദ്ധ വാർഷിക പരീക്ഷ</title>
+  <title>സെന്റ് ജോർജ് സൺഡേ സ്കൂൾ, കാര്യമ്പാടി - യൂണിറ്റ് പരീക്ഷ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manjari:wght@400;700&family=Gayathri:wght@400;700&display=swap" rel="stylesheet">
@@ -1037,6 +1037,62 @@
   </div>
 
   <script>
+    // Database configuration for storing PDF binaries safely
+    const DB_NAME = 'SundaySchoolExamDB_v3';
+    const DB_VERSION = 1;
+    let idb = null;
+
+    function initIndexedDB() {
+      return new Promise((resolve) => {
+        try {
+          const req = indexedDB.open(DB_NAME, DB_VERSION);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('pdfs')) {
+              db.createObjectStore('pdfs');
+            }
+          };
+          req.onsuccess = (e) => {
+            idb = e.target.result;
+            resolve(idb);
+          };
+          req.onerror = () => resolve(null);
+        } catch (e) {
+          resolve(null);
+        }
+      });
+    }
+
+    function storePdfInIDB(key, dataUrl) {
+      if (!idb) return Promise.resolve();
+      return new Promise((resolve) => {
+        try {
+          const tx = idb.transaction('pdfs', 'readwrite');
+          const store = tx.objectStore('pdfs');
+          store.put(dataUrl, key);
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => resolve();
+        } catch (e) {
+          resolve();
+        }
+      });
+    }
+
+    function getPdfFromIDB(key) {
+      if (!idb) return Promise.resolve(null);
+      return new Promise((resolve) => {
+        try {
+          const tx = idb.transaction('pdfs', 'readonly');
+          const store = tx.objectStore('pdfs');
+          const req = store.get(key);
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => resolve(null);
+        } catch (e) {
+          resolve(null);
+        }
+      });
+    }
+
     const DEFAULT_CONFIG = {
       adminPass: 'admin123',
       classes: {
@@ -1080,16 +1136,32 @@
     // Sync from permanent server database on load
     async function syncFromServerDatabase() {
       const badge = document.getElementById('syncStatusBadge');
+      await initIndexedDB();
+
       try {
         const res = await fetch('/api/data');
         if (res.ok) {
           const data = await res.json();
-          appState.config = data;
-          appState.results = data.results || [];
+          // If server was reset (e.g. Render restart) but local has newer data, preserve local
+          const localHasPapers = (appState.config.classes.classA.hasPdf || appState.config.classes.classB.hasPdf);
+          const serverHasPapers = (data.classes.classA.hasPdf || data.classes.classB.hasPdf);
+
+          if (!serverHasPapers && localHasPapers) {
+            console.log('Restoring class papers from persistent local backup to server...');
+            // Re-sync local state back to server
+            if (appState.config.classes.classA.hasPdf) saveClassConfig('classA');
+            if (appState.config.classes.classB.hasPdf) saveClassConfig('classB');
+          } else {
+            appState.config = data;
+            if (data.results && data.results.length > 0) {
+              appState.results = data.results;
+            }
+          }
+
           appState.serverConnected = true;
           saveLocalBackup();
           if (badge) {
-            badge.textContent = '🌐 ക്ലൗഡ് / സെർവർ ഡാറ്റാബേസ് ലൈവ്';
+            badge.textContent = '🌐 ക്ലൗഡ് / സെർവർ ലൈവ്';
             badge.className = 'badge badge-success';
           }
         } else {
@@ -1099,7 +1171,7 @@
         console.warn('Working in local/offline fallback mode:', e);
         appState.serverConnected = false;
         if (badge) {
-          badge.textContent = '💾 ഓഫ്‌ലൈൻ / ലോക്കൽ മോഡ്';
+          badge.textContent = '💾 ലോക്കൽ സ്റ്റോറേജ് ലൈവ്';
           badge.className = 'badge badge-warning';
         }
       }
@@ -1154,7 +1226,7 @@
       alert(`${Math.min(50, clean.length)} ഉത്തരങ്ങൾ അപ്ഡേറ്റ് ചെയ്തു!`);
     }
 
-    // Question Paper PDF Upload with permanent database persistence
+    // Question Paper PDF Upload with permanent dual storage (Server + IndexedDB)
     async function handlePdfUpload(classId, event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1171,27 +1243,34 @@
           appState.cachedPdfs[classId] = dataUrl;
           appState.config.classes[classId].hasPdf = true;
 
-          // Save to permanent server/cloud DB
+          // Always store a permanent binary copy in IndexedDB
+          await storePdfInIDB(`paper_${classId}`, dataUrl);
+
+          // Save to server if connected
           if (appState.serverConnected) {
-            const resp = await fetch('/api/upload-pdf', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                classId: classId,
-                pdfBase64: dataUrl,
-                filename: file.name
-              })
-            });
-            const result = await resp.json();
-            if (result.success) {
-              appState.config.classes[classId].pdfPath = result.pdfUrl;
+            try {
+              const resp = await fetch('/api/upload-pdf', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  classId: classId,
+                  pdfBase64: dataUrl,
+                  filename: file.name
+                })
+              });
+              const result = await resp.json();
+              if (result.success) {
+                appState.config.classes[classId].pdfPath = result.pdfUrl;
+              }
+            } catch (netErr) {
+              console.warn('Server upload error, saved locally in IndexedDB:', netErr);
             }
           }
 
           saveLocalBackup();
           updateAdminStatusBadges();
           populateClassSelect();
-          alert(`ചോദ്യപേപ്പർ സ്ഥിരമായി ഡാറ്റാബേസിൽ സേവ് ചെയ്തു: ${file.name}`);
+          alert(`ചോദ്യപേപ്പർ വിജയകരമായി സേവ് ചെയ്തു: ${file.name}`);
         } catch (err) {
           console.error(err);
           alert('PDF സൂക്ഷിക്കുന്നതിൽ തകരാർ സംഭവിച്ചു: ' + err.message);
@@ -1701,7 +1780,13 @@
       try {
         let pdfSource = appState.cachedPdfs[classId];
 
-        // If not cached in memory, check server PDF URL
+        // 1. Check local IndexedDB first
+        if (!pdfSource) {
+          pdfSource = await getPdfFromIDB(`paper_${classId}`);
+          if (pdfSource) appState.cachedPdfs[classId] = pdfSource;
+        }
+
+        // 2. If not in IndexedDB, fetch from server path
         if (!pdfSource && appState.config.classes[classId].pdfPath) {
           pdfSource = appState.config.classes[classId].pdfPath;
         }

@@ -1219,8 +1219,67 @@
       }
     }
 
+    // Auto load & parse Answer Key PDF if committed directly to GitHub repo
+    async function loadRepositoryAnswerKeyPdf(classId) {
+      const fileName = `key_${classId}.pdf`;
+      try {
+        const resp = await fetch(`/${fileName}`);
+        if (!resp.ok) return false;
+        const arrayBuffer = await resp.arrayBuffer();
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let extractedText = '';
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+          const page = await pdf.getPage(pageNum);
+          const content = await page.getTextContent();
+          extractedText += ' ' + content.items.map(item => item.str).join(' ');
+        }
+
+        const parsedKeys = {};
+        const regex = /(?:Q|q)?\s*([1-9]|[1-4][0-9]|50)\s*[\.\:\-\)\s]+\s*([A-Da-d])/g;
+        let match;
+        while ((match = regex.exec(extractedText)) !== null) {
+          const qNum = parseInt(match[1], 10);
+          const ans = match[2].toUpperCase();
+          if (qNum >= 1 && qNum <= 50) parsedKeys[qNum] = ans;
+        }
+
+        if (Object.keys(parsedKeys).length < 20) {
+          const tokens = extractedText.replace(/[^0-9A-Za-z]/g, ' ').split(/\s+/).filter(Boolean);
+          for (let i = 0; i < tokens.length - 1; i++) {
+            const num = parseInt(tokens[i], 10);
+            const letter = tokens[i+1].toUpperCase();
+            if (num >= 1 && num <= 50 && ['A', 'B', 'C', 'D'].includes(letter)) {
+              if (!parsedKeys[num]) parsedKeys[num] = letter;
+            }
+          }
+        }
+
+        if (Object.keys(parsedKeys).length > 0) {
+          for (let i = 1; i <= 50; i++) {
+            if (parsedKeys[i]) {
+              appState.config.classes[classId].answerKey[i-1] = parsedKeys[i];
+              const el = document.getElementById(`${classId}_key_${i}`);
+              if (el) el.value = parsedKeys[i];
+            }
+          }
+          appState.config.classes[classId].hasKeyPdf = true;
+          return true;
+        }
+      } catch (e) {
+        console.warn(`Could not load ${fileName}:`, e);
+      }
+      return false;
+    }
+
     window.addEventListener('DOMContentLoaded', async () => {
       await syncFromServerDatabase();
+
+      // Check if Answer Key PDFs exist in repository (key_classA.pdf, key_classB.pdf)
+      await loadRepositoryAnswerKeyPdf('classA');
+      await loadRepositoryAnswerKeyPdf('classB');
+
       renderKeyInputs('classA');
       renderKeyInputs('classB');
       updateAdminStatusBadges();
@@ -1828,9 +1887,14 @@
           if (pdfSource) appState.cachedPdfs[classId] = pdfSource;
         }
 
-        // 2. If not in IndexedDB, fetch from server path
-        if (!pdfSource && appState.config.classes[classId].pdfPath) {
-          pdfSource = appState.config.classes[classId].pdfPath;
+        // 2. Check direct repository PDF file or server path
+        if (!pdfSource) {
+          if (appState.config.classes[classId].pdfPath) {
+            pdfSource = appState.config.classes[classId].pdfPath;
+          } else {
+            // Default repository file name fallback
+            pdfSource = `/paper_${classId}.pdf`;
+          }
         }
 
         if (!pdfSource) {

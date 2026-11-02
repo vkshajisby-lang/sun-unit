@@ -38,14 +38,76 @@ const DEFAULT_DB = {
 };
 
 function readDB() {
+  let db = DEFAULT_DB;
   try {
     if (fs.existsSync(DB_FILE)) {
-      return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+      db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
     }
   } catch (e) {
     console.error('Error reading db:', e);
   }
-  return DEFAULT_DB;
+
+  // Check if PDFs were committed directly to repository (Method 2)
+  const rootPdfA = path.join(__dirname, 'paper_classA.pdf');
+  const rootPdfB = path.join(__dirname, 'paper_classB.pdf');
+  const uploadPdfA = path.join(UPLOADS_DIR, 'paper_classA.pdf');
+  const uploadPdfB = path.join(UPLOADS_DIR, 'paper_classB.pdf');
+
+  if (fs.existsSync(rootPdfA) || fs.existsSync(uploadPdfA)) {
+    db.classes.classA.hasPdf = true;
+    db.classes.classA.pdfPath = fs.existsSync(rootPdfA) ? '/paper_classA.pdf' : '/uploads/paper_classA.pdf';
+  }
+  if (fs.existsSync(rootPdfB) || fs.existsSync(uploadPdfB)) {
+    db.classes.classB.hasPdf = true;
+    db.classes.classB.pdfPath = fs.existsSync(rootPdfB) ? '/paper_classB.pdf' : '/uploads/paper_classB.pdf';
+  }
+
+  // Check if Answer Keys were committed directly to repository
+  const keyA_json = path.join(__dirname, 'key_classA.json');
+  const keyB_json = path.join(__dirname, 'key_classB.json');
+  const keyA_txt = path.join(__dirname, 'key_classA.txt');
+  const keyB_txt = path.join(__dirname, 'key_classB.txt');
+
+  function parseTextKey(filePath) {
+    try {
+      const text = fs.readFileSync(filePath, 'utf8');
+      const clean = text.replace(/[^A-Da-d]/g, '').toUpperCase().split('');
+      if (clean.length > 0) {
+        const arr = Array(50).fill('A');
+        for (let i = 0; i < Math.min(50, clean.length); i++) arr[i] = clean[i];
+        return arr;
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  if (fs.existsSync(keyA_json)) {
+    try {
+      db.classes.classA.answerKey = JSON.parse(fs.readFileSync(keyA_json, 'utf8'));
+      db.classes.classA.hasKeyPdf = true;
+    } catch (e) {}
+  } else if (fs.existsSync(keyA_txt)) {
+    const parsed = parseTextKey(keyA_txt);
+    if (parsed) {
+      db.classes.classA.answerKey = parsed;
+      db.classes.classA.hasKeyPdf = true;
+    }
+  }
+
+  if (fs.existsSync(keyB_json)) {
+    try {
+      db.classes.classB.answerKey = JSON.parse(fs.readFileSync(keyB_json, 'utf8'));
+      db.classes.classB.hasKeyPdf = true;
+    } catch (e) {}
+  } else if (fs.existsSync(keyB_txt)) {
+    const parsed = parseTextKey(keyB_txt);
+    if (parsed) {
+      db.classes.classB.answerKey = parsed;
+      db.classes.classB.hasKeyPdf = true;
+    }
+  }
+
+  return db;
 }
 
 function writeDB(data) {
